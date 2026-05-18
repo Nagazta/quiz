@@ -34,16 +34,20 @@ function HomeScreen({ onStart, onFlashcards, stats }) {
   const [count, setCount] = useState(20);
   const [randomize, setRandomize] = useState(true);
 
-  const pool = questions.filter(
-    (q) => selectedSection === "All Topics" || q.section === selectedSection
-  );
+  const pool = questions.filter((q) => {
+    if (selectedSection === "All Topics") return true;
+    if (selectedSection === "Old Questions") return q.id >= 1 && q.id <= 120;
+    if (selectedSection === "New Questions") return q.id >= 121 && q.id <= 220;
+    if (selectedSection === "Prefinal Questions") return q.id >= 221 && q.id <= 314;
+    return q.section === selectedSection;
+  });
 
   return (
     <div className="home">
       <div className="home-hero">
         <div className="hero-glow" />
         <h1 className="hero-title">NetStudy<span className="accent">Pro</span></h1>
-        <p className="hero-sub">DHCP · DNS · File &amp; Share Permissions</p>
+        <p className="hero-sub">DHCP · DNS · File & Share Permissions · Storage & RAID · High Availability</p>
       </div>
 
       {stats.sessions > 0 && (
@@ -73,7 +77,13 @@ function HomeScreen({ onStart, onFlashcards, stats }) {
                 className={`pill${selectedSection === s ? " active" : ""}`}
                 onClick={() => {
                   setSelectedSection(s);
-                  const max = questions.filter((q) => s === "All Topics" || q.section === s).length;
+                  const max = questions.filter((q) => {
+                    if (s === "All Topics") return true;
+                    if (s === "Old Questions") return q.id >= 1 && q.id <= 120;
+                    if (s === "New Questions") return q.id >= 121 && q.id <= 220;
+                    if (s === "Prefinal Questions") return q.id >= 221 && q.id <= 314;
+                    return q.section === s;
+                  }).length;
                   if (count > max) setCount(max);
                 }}
               >
@@ -124,9 +134,13 @@ function HomeScreen({ onStart, onFlashcards, stats }) {
 
 // ── QUIZ ──────────────────────────────────────────────────────────────────────
 function QuizScreen({ config, onFinish, onBack }) {
-  const pool = questions.filter(
-    (q) => config.section === "All Topics" || q.section === config.section
-  );
+  const pool = questions.filter((q) => {
+    if (config.section === "All Topics") return true;
+    if (config.section === "Old Questions") return q.id >= 1 && q.id <= 120;
+    if (config.section === "New Questions") return q.id >= 121 && q.id <= 220;
+    if (config.section === "Prefinal Questions") return q.id >= 221 && q.id <= 314;
+    return q.section === config.section;
+  });
   const [qs] = useState(() => {
     const p = config.randomize ? shuffle(pool) : pool;
     return p.slice(0, config.count);
@@ -340,9 +354,13 @@ function ResultScreen({ results, total, correct, pct, onHome, onRetry }) {
 
 // ── FLASHCARDS ────────────────────────────────────────────────────────────────
 function FlashcardScreen({ config, onBack }) {
-  const pool = questions.filter(
-    (q) => config.section === "All Topics" || q.section === config.section
-  );
+  const pool = questions.filter((q) => {
+    if (config.section === "All Topics") return true;
+    if (config.section === "Old Questions") return q.id >= 1 && q.id <= 120;
+    if (config.section === "New Questions") return q.id >= 121 && q.id <= 220;
+    if (config.section === "Prefinal Questions") return q.id >= 221 && q.id <= 314;
+    return q.section === config.section;
+  });
   const [cards] = useState(() => shuffle(pool));
   const [idx, setIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
